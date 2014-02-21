@@ -1,0 +1,62 @@
+package mods.DCironchain.common;
+
+import cpw.mods.fml.common.network.IGuiHandler;
+import mods.DCironchain.entity.ContainerRHopper;
+import mods.DCironchain.entity.TileEntityRHopper;
+import mods.DCironchain.gui.GuiRHopper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
+
+public class CommonProxy implements IGuiHandler{
+	
+	public int addArmor(String armor)
+	{
+		return 0;
+	}
+	
+	public int getRenderID()
+	{
+		return -1;
+	}
+	
+	public void registerRenderers(){}
+
+	public World getClientWorld() {
+		
+		return null;
+	}
+	
+	@Override
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+
+		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+		InventoryPlayer inventoryPlayer = player.inventory;
+		if (tileentity != null && tileentity instanceof TileEntityRHopper && ID == DCsIronChain.guiIdRHopper) {
+			return new ContainerRHopper(inventoryPlayer, (TileEntityRHopper) tileentity);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	@Override
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+
+		TileEntity tileentity = world.getBlockTileEntity(x, y, z);
+		InventoryPlayer inventoryPlayer = player.inventory;
+		if (tileentity != null && tileentity instanceof TileEntityRHopper && ID == DCsIronChain.guiIdRHopper) {
+			return new GuiRHopper(inventoryPlayer, (TileEntityRHopper) tileentity);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+}

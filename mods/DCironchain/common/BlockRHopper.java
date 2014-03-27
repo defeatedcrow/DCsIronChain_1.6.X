@@ -40,6 +40,7 @@ public class BlockRHopper extends BlockContainer{
 	@SideOnly(Side.CLIENT)
 	private Icon insideIcon;
 	
+	//DOWN, UP, NORTH, SOUTH, WEST, EAST
 	private final int[] sideX = {0, 0, 0, 0, -1, 1};
 	private final int[] sideZ = {0, 0, -1, 1, 0, 0};
 	
@@ -146,9 +147,9 @@ public class BlockRHopper extends BlockContainer{
 
         if (tileentityRhopper != null)
         {
-            for (int j1 = 0; j1 < tileentityRhopper.inventory.getSizeInventory(); ++j1)
+            for (int j1 = 0; j1 < tileentityRhopper.getSizeInventory(); ++j1)
             {
-                ItemStack itemstack = tileentityRhopper.inventory.getStackInSlot(j1);
+                ItemStack itemstack = tileentityRhopper.getStackInSlot(j1);
 
                 if (itemstack != null)
                 {
@@ -197,7 +198,7 @@ public class BlockRHopper extends BlockContainer{
 	
 	public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
     {
-        return Container.calcRedstoneFromInventory(getHopperTile(par1World, par2, par3, par4).inventory);
+        return Container.calcRedstoneFromInventory(getHopperTile(par1World, par2, par3, par4));
     }
 	
 	public static TileEntityRHopper getHopperTile(IBlockAccess par0IBlockAccess, int par1, int par2, int par3)

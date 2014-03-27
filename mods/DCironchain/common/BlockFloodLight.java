@@ -5,20 +5,23 @@ import java.util.Random;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.*;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import mods.DCironchain.client.RenderFloodLight;
 import mods.DCironchain.common.*;
+import mods.DCironchain.entity.TileEntityFloodLight;
 
-public class BlockFloodLight extends Block{
+public class BlockFloodLight extends BlockContainer{
 	
 	@SideOnly(Side.CLIENT)
 	private Icon baseIcon;
@@ -220,6 +223,11 @@ public class BlockFloodLight extends Block{
 	{
 		this.glowIcon = par1IconRegister.registerIcon("crowsdefeat:floodlight_glow");
 		this.baseIcon = par1IconRegister.registerIcon("crowsdefeat:anchorbolt");
+	}
+
+	@Override
+	public TileEntity createNewTileEntity(World world) {
+		return new TileEntityFloodLight();
 	}
 
 }

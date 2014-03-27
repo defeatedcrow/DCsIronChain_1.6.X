@@ -10,11 +10,11 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerRHopper extends Container
 {
-    private final InventoryRHopper InventryRHopper;
+    private final TileEntityRHopper InventryRHopper;
 
     public ContainerRHopper(InventoryPlayer par1InventoryPlayer, TileEntityRHopper RHopper)
     {
-        this.InventryRHopper = RHopper.inventory;
+        this.InventryRHopper = RHopper;
         this.InventryRHopper.openChest();
         byte b0 = 51;
         int i;

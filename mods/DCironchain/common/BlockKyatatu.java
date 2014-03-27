@@ -87,7 +87,9 @@ public class BlockKyatatu extends Block{
 	@Override
 	public int idDropped(int metadata, Random rand, int fortune)
 	{
-		return this.blockID;
+		int m = metadata;
+		if (m < 2) return this.blockID;
+		else return 0;
 	}
 	
 	@Override

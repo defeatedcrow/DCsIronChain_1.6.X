@@ -16,13 +16,13 @@ public class GuiRHopper extends GuiContainer
 {
     private static final ResourceLocation hopperGuiTextures = new ResourceLocation("textures/gui/container/hopper.png");
     private IInventory playerInv;
-    private InventoryRHopper entityInv;
+    private TileEntityRHopper entityInv;
 
     public GuiRHopper(InventoryPlayer par1InventoryPlayer, TileEntityRHopper RHopper)
     {
         super(new ContainerRHopper(par1InventoryPlayer, RHopper));
         this.playerInv = par1InventoryPlayer;
-        this.entityInv = RHopper.inventory;
+        this.entityInv = RHopper;
         this.allowUserInput = false;
         this.ySize = 133;
     }

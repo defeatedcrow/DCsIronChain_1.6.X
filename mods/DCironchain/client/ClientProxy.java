@@ -5,9 +5,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import mods.DCironchain.common.CommonProxy;
+import mods.DCironchain.entity.TileEntityFloodLight;
+import mods.DCironchain.entity.TileEntityRHopper;
 
 
 @SideOnly(Side.CLIENT)
@@ -35,5 +38,10 @@ public class ClientProxy extends CommonProxy {
 	{
 		RenderingRegistry.registerBlockHandler(new RenderFloodLight());
 		RenderingRegistry.registerBlockHandler(new RenderRHopper());
+	}
+	
+	public void registerTile() {
+		GameRegistry.registerTileEntity(TileEntityRHopper.class, "TileEntityRHopper");
+		ClientRegistry.registerTileEntity(TileEntityFloodLight.class, "TileEntityFloodLight", new TileRenderFloodLight());
 	}
 }

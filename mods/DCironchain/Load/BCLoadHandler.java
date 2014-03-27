@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import buildcraft.api.core.Position;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
@@ -12,6 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 
 public class BCLoadHandler{
 	
@@ -20,7 +24,7 @@ public class BCLoadHandler{
 		LinkedList possiblePipe = new LinkedList();
 		
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-		      if ((from == ForgeDirection.UNKNOWN) || (from == dir.getOpposite()))
+		      if ((from == ForgeDirection.UNKNOWN) || (from == dir))
 		      {
 		    	  {
 		    		  Position pos = new Position(X, Y, Z, dir);
@@ -54,16 +58,16 @@ public class BCLoadHandler{
 			Position itemPos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, (ForgeDirection)pipes.get(choice));
 
 		    itemPos.x += 0.5D;
-		    itemPos.y += 0.25D;
+		    itemPos.y += 0.5D;
 		    itemPos.z += 0.5D;
-		    itemPos.moveForwards(0.5D);
+		    itemPos.moveForwards(1.0D);
 		    
 		    Position pipePos = new Position(tile.xCoord, tile.yCoord, tile.zCoord, (ForgeDirection)pipes.get(choice));
 		    pipePos.moveForwards(1.0D);
 		    
 			IPipeTile pipe = (IPipeTile)tile.worldObj.getBlockTileEntity((int)pipePos.x, (int)pipePos.y, (int)pipePos.z);
-			ItemStack drop = itemstack.splitStack(1);
-			if (pipe.injectItem(drop, true, itemPos.orientation.getOpposite()) > 0) {
+			ItemStack drop = itemstack.copy();
+			if (pipe.injectItem(drop, true, itemPos.orientation) > 0) {
 			      return true;
 			    }
 			    pipes.remove(choice);

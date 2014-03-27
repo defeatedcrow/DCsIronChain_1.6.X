@@ -38,13 +38,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(
 		modid = "DCsIronChain",
 		name = "DCsIronChainMod",
-		version = "1.6.2_1.0b",
-		dependencies = "required-after:Forge@[9.10,);required-after:FML@[6.2.0,)"
+		version = "1.6.2_1.0c",
+		dependencies = "required-after:Forge@[9.10,);required-after:FML@[6.2.0,);after:BuildCraft|Core"
 		)
 @NetworkMod(
 		clientSideRequired = true,
 		serverSideRequired = false,
-		channels = "TileRHopper", packetHandler = PacketHandler.class
+		channels = {"TileRHopper", "TileFloodLight"}, packetHandler = PacketHandler.class
 		)
 
 public class DCsIronChain{
@@ -197,7 +197,7 @@ public class DCsIronChain{
 	      (new LangRegister()).registerLang();
 	      
 	    //registering new gui, entity
-	    GameRegistry.registerTileEntity(TileEntityRHopper.class, "TileEntityRHopper");
+	    proxy.registerTile();
 	      
 		NetworkRegistry.instance().registerGuiHandler(instance, proxy);
 	      

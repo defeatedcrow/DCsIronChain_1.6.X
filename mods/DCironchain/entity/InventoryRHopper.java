@@ -168,89 +168,86 @@ public class InventoryRHopper implements Hopper{
 	}
 	
 	//バグるのでコメントアウト中
-	/*
-	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount)
-	  {
-	    Hopper inv = this;
-	    ItemStack extract = null;
-
-	    for (int i = 0; i < 5; i++) {
-	      if (inv.getStackInSlot(i) != null)
-	      {
-	        ItemStack stack = inv.getStackInSlot(i);
-
-	        if (doRemove) {
-	          extract = inv.decrStackSize(i, 1); break;
-	        }
-	        extract = stack.copy();
-	        extract.stackSize = 1;
-
-	        break;
-	      }
-	    }
-	    if (extract != null) {
-	      return new ItemStack[] { extract };
-	    }
-	    return null;
-	  }
-
-	@Override
-	public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from) {
-		
-		int l = this.getSizeInventory();
-		int removeItemstack = 0;
-		for (int i = 0; l < l && stack != null && stack.stackSize > 0; ++l)
-        {
-            ItemStack current = this.getStackInSlot(i);
-            if (this.isItemValidForSlot(i, stack))
-            {
-            	boolean flag = false;
-
-                if (current == null)
-                {
-                    this.setInventorySlotContents(i, stack);
-                    stack = null;
-                    flag = true;
-                }
-                else if (areItemStacksEqualItem(current, stack))
-                {
-                    int k = stack.getMaxStackSize() - current.stackSize;
-                    int j = Math.min(stack.stackSize, k);
-                    stack.stackSize -= j;
-                    current.stackSize += j;
-                    removeItemstack = j;
-                    flag = j > 0;
-                }
-                
-                if (flag)
-                {
-                    this.onInventoryChanged();
-                }
-            }
-        }
-		
-		if (stack != null && stack.stackSize == 0)
-        {
-            stack = null;
-            return 0;
-        }
-		else
-		{
-			return removeItemstack;
-		}
-	}
-	
-	private static boolean areItemStacksEqualItem(ItemStack par0ItemStack, ItemStack par1ItemStack)
-    {
-        return par0ItemStack.itemID != par1ItemStack.itemID ? false : (par0ItemStack.getItemDamage() != par1ItemStack.getItemDamage() ? false : (par0ItemStack.stackSize > par0ItemStack.getMaxStackSize() ? false : ItemStack.areItemStackTagsEqual(par0ItemStack, par1ItemStack)));
-    }
-	
-	@Override
-	public ConnectOverride overridePipeConnection(PipeType type,
-			ForgeDirection with) {
-		if (type == PipeType.ITEM) return ConnectOverride.CONNECT;
-		else return ConnectOverride.DEFAULT;
-	}
-	*/
-
+//	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount)
+//	  {
+//	    Hopper inv = this;
+//	    ItemStack extract = null;
+//
+//	    for (int i = 0; i < 5; i++) {
+//	      if (inv.getStackInSlot(i) != null)
+//	      {
+//	        ItemStack stack = inv.getStackInSlot(i);
+//
+//	        if (doRemove) {
+//	          extract = inv.decrStackSize(i, 1); break;
+//	        }
+//	        extract = stack.copy();
+//	        extract.stackSize = 1;
+//
+//	        break;
+//	      }
+//	    }
+//	    if (extract != null) {
+//	      return new ItemStack[] { extract };
+//	    }
+//	    return null;
+//	  }
+//
+//	@Override
+//	public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from) {
+//		
+//		int l = this.getSizeInventory();
+//		int removeItemstack = 0;
+//		for (int i = 0; l < l && stack != null && stack.stackSize > 0; ++l)
+//        {
+//            ItemStack current = this.getStackInSlot(i);
+//            if (this.isItemValidForSlot(i, stack))
+//            {
+//            	boolean flag = false;
+//
+//                if (current == null)
+//                {
+//                    this.setInventorySlotContents(i, stack);
+//                    stack = null;
+//                    flag = true;
+//                }
+//                else if (areItemStacksEqualItem(current, stack))
+//                {
+//                    int k = stack.getMaxStackSize() - current.stackSize;
+//                    int j = Math.min(stack.stackSize, k);
+//                    stack.stackSize -= j;
+//                    current.stackSize += j;
+//                    removeItemstack = j;
+//                    flag = j > 0;
+//                }
+//                
+//                if (flag)
+//                {
+//                    this.onInventoryChanged();
+//                }
+//            }
+//        }
+//		
+//		if (stack != null && stack.stackSize == 0)
+//        {
+//            stack = null;
+//            return 0;
+//        }
+//		else
+//		{
+//			return removeItemstack;
+//		}
+//	}
+//	
+//	private static boolean areItemStacksEqualItem(ItemStack par0ItemStack, ItemStack par1ItemStack)
+//    {
+//        return par0ItemStack.itemID != par1ItemStack.itemID ? false : (par0ItemStack.getItemDamage() != par1ItemStack.getItemDamage() ? false : (par0ItemStack.stackSize > par0ItemStack.getMaxStackSize() ? false : ItemStack.areItemStackTagsEqual(par0ItemStack, par1ItemStack)));
+//    }
+//	
+//	@Override
+//	public ConnectOverride overridePipeConnection(PipeType type,
+//			ForgeDirection with) {
+//		if (type == PipeType.ITEM) return ConnectOverride.CONNECT;
+//		else return ConnectOverride.DEFAULT;
+//	}
 }

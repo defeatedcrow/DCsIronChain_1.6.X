@@ -181,7 +181,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
         {
         	//接続しているパイプのリスト（方向）
             ForgeDirection from = ForgeDirection.getOrientation(this.getBlockMetadata()).getOpposite();//メタデータを得る
-            if (from == ForgeDirection.DOWN) from = ForgeDirection.UP;//下向きに設置した場合は真上を向いている
+            if (from == ForgeDirection.UP) from = ForgeDirection.DOWN;//下向きに設置した場合は真上を向いている
         	ArrayList<ForgeDirection> dir = BCLoadHandler.getPipeConected(this.worldObj, this.xCoord, this.yCoord, this.zCoord, from);
 
         	DCsLog.debugTrace("CurrentMetadata: " + this.getBlockMetadata());

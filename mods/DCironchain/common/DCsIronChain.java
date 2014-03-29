@@ -38,7 +38,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(
 		modid = "DCsIronChain",
 		name = "DCsIronChainMod",
-		version = "1.6.2_1.0c",
+		version = "1.6.2_1.1c",
 		dependencies = "required-after:Forge@[9.10,);required-after:FML@[6.2.0,);after:BuildCraft|Core"
 		)
 @NetworkMod(

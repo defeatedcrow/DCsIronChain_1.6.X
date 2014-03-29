@@ -6,6 +6,7 @@ import java.util.List;
 import mods.DCironchain.Load.BCLoadHandler;
 import mods.DCironchain.common.BlockRHopper;
 import mods.DCironchain.common.DCsIronChain;
+import mods.DCironchain.common.DCsLog;
 import mods.DCironchain.common.PacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
@@ -28,7 +29,6 @@ import net.minecraft.util.Facing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-
 import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeConnection.ConnectOverride;
@@ -176,46 +176,49 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
     {
         boolean tryInsert = false;
         
+        //BCパイプへの挿入
     	if (DCsIronChain.getLoadBC)
         {
         	//接続しているパイプのリスト（方向）
-    		ArrayList pipes = new ArrayList();
-            ForgeDirection from = ForgeDirection.getOrientation(this.getBlockMetadata());
-            if (from == ForgeDirection.DOWN) from = ForgeDirection.UP;
-        	ForgeDirection[] dir = BCLoadHandler.getPipeConected(this.worldObj, this.xCoord, this.yCoord, this.zCoord, from);
-        	for (int i = 0; i < dir.length; i++)
-        	{
-        		pipes.add(dir[i]);
-        	}
+            ForgeDirection from = ForgeDirection.getOrientation(this.getBlockMetadata()).getOpposite();//メタデータを得る
+            if (from == ForgeDirection.DOWN) from = ForgeDirection.UP;//下向きに設置した場合は真上を向いている
+        	ArrayList<ForgeDirection> dir = BCLoadHandler.getPipeConected(this.worldObj, this.xCoord, this.yCoord, this.zCoord, from);
 
-        	if (pipes.size() > 0)
+        	DCsLog.debugTrace("CurrentMetadata: " + this.getBlockMetadata());
+        	DCsLog.debugTrace("CurrentDirection: " + from.name());
+        	DCsLog.debugTrace("Direction size: " + dir.size());
+        	
+        	//fromはメタデータから得た向き（一方向）なので、大抵の場合はサイズ1か0のはず
+        	if (dir.size() > 0)
         	{
-        		for (int i = 0; i < this.getSizeInventory(); ++i)//5スロット内部をサーチ
+        		for (int i = 0; i < 5; ++i)//5スロット内部をサーチ
                 {
                     if (this.getStackInSlot(i) != null)//中身があった
                     {
                         ItemStack current = this.getStackInSlot(i);
-                    	ItemStack itemstack[] = this.extractItem(false, from, 1);
+                        DCsLog.debugTrace("Current size: " + current.stackSize);
+                    	ItemStack itemstack[] = this.extractItem(true, from, 1);
+                    	
                         for (int l = 0; l < itemstack.length; l++)
                         {
-                        	if (BCLoadHandler.dropIntoPipe(this, pipes, itemstack[l]))
+                        	DCsLog.debugTrace("Extracted Item: " + itemstack[l].stackSize + " : " + itemstack[l].getDisplayName());
+                        	if (BCLoadHandler.dropIntoPipe(this, dir, itemstack[l]))
                             {
-                            	current.stackSize --;
+                        		DCsLog.debugTrace("Current size after: " + current.stackSize);
+                            	
+                            	tryInsert = true;
+                            	break;
                             }
-                        	if (itemstack == null || itemstack[l].stackSize == 0)
-                            {
-                                this.onInventoryChanged();
-                                return true;
-                            }
-                        	this.setInventorySlotContents(i, current);
-                        	tryInsert = true;
+                        	
                         }
+                        this.onInventoryChanged();
+                        return true;
                     }
                 }
         	}
         }
         
-    	
+    	//バニラホッパーの挙動
     	IInventory iinventory = this.getOutputInventory();
 
         if (iinventory == null || tryInsert)//パイプへの搬出がうまくいった場合は何もしない
@@ -531,7 +534,8 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
  
 			if (this.hopperItemStacks[i].stackSize <= j)
 			{
-				itemstack = this.hopperItemStacks[i];
+				itemstack = this.hopperItemStacks[i].copy();
+				this.hopperItemStacks[i].stackSize = 0;
 				this.hopperItemStacks[i] = null;
 				return itemstack;
 			}
@@ -569,7 +573,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		if (i < this.getSizeInventory()) {
+		if (i < 5) {
 			this.hopperItemStacks[i] = itemstack;
 			
 			if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit())
@@ -681,43 +685,47 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
 	    return null;
 	  }
 
-	//こちらはパイプから来たアイテムを受け入れるためのもの。現状は挿入できずパイプから弾かれている。
+	//こちらはパイプから来たアイテムを受け入れるためのもの。
 	@Override
 	public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from) {
 		
 		int l = this.getSizeInventory();
 		int removeItemstack = 0;
-		for (int i = 0; i < 5 && stack != null && stack.stackSize > 0; i++)
-        {
-            ItemStack current = this.getStackInSlot(i);
-            if (this.isItemValidForSlot(i, stack))
-            {
-            	boolean flag = false;
+		boolean sameDir = from== ForgeDirection.getOrientation(this.getBlockMetadata());
+		
+		if (!sameDir) {
+			for (int i = 0; i < 5 && stack != null && stack.stackSize > 0; i++)
+	        {
+	            ItemStack current = this.getStackInSlot(i);
+	            if (this.isItemValidForSlot(i, stack))
+	            {
+	            	boolean flag = false;
 
-                if (current == null)
-                {
-                    this.setInventorySlotContents(i, stack);
-                    removeItemstack = stack.stackSize;
-                    stack.stackSize = 0;
-                    stack = (ItemStack)null;
-                    flag = true;
-                }
-                else if (areItemStacksEqualItem(current, stack))
-                {
-                    int k = stack.getMaxStackSize() - current.stackSize;
-                    int j = Math.min(stack.stackSize, k);
-                    stack.stackSize -= j;
-                    current.stackSize += j;
-                    removeItemstack = j;
-                    flag = j > 0;
-                }
-                
-                if (flag)
-                {
-                    this.onInventoryChanged();
-                }
-            }
-        }
+	                if (current == null || current.stackSize <= 0)
+	                {
+	                    this.setInventorySlotContents(i, stack.copy());
+	                    removeItemstack = stack.stackSize;
+	                    stack.stackSize = 0;
+	                    stack = (ItemStack)null;
+	                    flag = true;
+	                }
+	                else if (areItemStacksEqualItem(current, stack))
+	                {
+	                    int k = stack.getMaxStackSize() - current.stackSize;
+	                    int j = Math.min(stack.stackSize, k);
+	                    stack.stackSize -= j;
+	                    current.stackSize += j;
+	                    removeItemstack = j;
+	                    flag = j > 0;
+	                }
+	                
+	                if (flag)
+	                {
+	                    this.onInventoryChanged();
+	                }
+	            }
+	        }
+		}
 		
 		if (stack != null && stack.stackSize == 0)
         {
@@ -733,7 +741,9 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
 	@Override
 	public ConnectOverride overridePipeConnection(PipeType type,
 			ForgeDirection with) {
-		if (type == PipeType.ITEM) return ConnectOverride.CONNECT;
-		else return ConnectOverride.DEFAULT;
+		if (type == PipeType.ITEM /*&& (with == ForgeDirection.DOWN || with == ForgeDirection.getOrientation(this.getBlockMetadata()).getOpposite())*/) {
+			return ConnectOverride.CONNECT;
+		}
+		else return ConnectOverride.DISCONNECT;
 	}
 }

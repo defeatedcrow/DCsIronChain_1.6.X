@@ -70,6 +70,20 @@ public class RecipeRegister {
     			  Character.valueOf('Z'), Block.dropper
     			  });
       
+      GameRegistry.addRecipe(
+    		  new ItemStack(DCsIronChain.RHopperGold, 1),
+    		  new Object[]{" X ","XZX"," X ",
+    			  Character.valueOf('X'), Item.ingotGold,
+    			  Character.valueOf('Z'), DCsIronChain.RHopper,
+    			  });
+      
+      GameRegistry.addRecipe(
+    		  new ItemStack(DCsIronChain.RHopperBlack, 1),
+    		  new Object[]{" X ","XZX"," X ",
+    			  Character.valueOf('X'), Block.obsidian,
+    			  Character.valueOf('Z'), DCsIronChain.RHopper,
+    			  });
+      
       //use bronze recipe
       
       GameRegistry.addRecipe(

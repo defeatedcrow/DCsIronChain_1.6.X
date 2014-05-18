@@ -3,6 +3,8 @@ package mods.DCironchain.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mods.DCironchain.Load.BCLoadHandler;
 import mods.DCironchain.common.DCsIronChain;
 import mods.DCironchain.common.DCsLog;
@@ -26,6 +28,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Facing;
+import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -34,9 +37,8 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeConnection.ConnectOverride;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
-public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnection, ISpecialInventory
+public class TileEntityRHopperBlack extends TileEntityRHopper
 {
-
 	protected static short mode = 0;
 	
     protected int transferCooldown = -1;
@@ -407,7 +409,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
         if (par0IInventory instanceof ISidedInventory) {
         	return ((ISidedInventory)par0IInventory).canExtractItem(par2, par1ItemStack, par3);
         }
-        else if (par0IInventory instanceof TileEntityRHopper) {
+        else if (par0IInventory instanceof TileEntityRHopperBlack) {
         	return false;
         }
         else if (par0IInventory instanceof TileEntityHopper) {
@@ -473,7 +475,9 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
     //EntityItemの吸引範囲
     public static EntityItem getEntityAbove(World par0World, double par1, double par3, double par5)
     {
-        List list = par0World.selectEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getAABBPool().getAABB(par1 - 1.0D, par3, par5 - 1.0D, par1 + 2.0D, par3 + 2.0D, par5 + 2.0D), IEntitySelector.selectAnything);
+    	double area = mode;
+    	if (area <= 1.0D) area = 1.0D;
+        List list = par0World.selectEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getAABBPool().getAABB(par1 - (area), par3 - area, par5 - (area), par1 + area + 1, par3 + 1, par5 + area + 1), IEntitySelector.selectAnything);
         return list.size() > 0 ? (EntityItem)list.get(0) : null;
     }
 
@@ -600,7 +604,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
 	@Override
 	public String getInvName() {
 		
-		return "Upward Hopper";
+		return "Black Upward Hopper";
 	}
 
 	@Override
@@ -676,7 +680,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
 	@Override
 	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount)
 	  {
-	    TileEntityRHopper inv = this;
+	    TileEntityRHopperBlack inv = this;
 	    ItemStack extract = null;
 
 	    for (int i = 0; i < 5; i++) {

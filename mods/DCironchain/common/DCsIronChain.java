@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import mods.DCironchain.common.*;
+import mods.DCironchain.common.material.*;
 import mods.DCironchain.entity.TileEntityRHopper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -38,7 +39,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(
 		modid = "DCsIronChain",
 		name = "DCsIronChainMod",
-		version = "1.6.2_1.1c",
+		version = "1.6.2_1.2a",
 		dependencies = "required-after:Forge@[9.10,);required-after:FML@[6.2.0,);after:BuildCraft|Core"
 		)
 @NetworkMod(
@@ -61,6 +62,8 @@ public class DCsIronChain{
 	public static Block  floodLight;
 	public static Block  DCLightPart;
 	public static Block  RHopper;
+	public static Block  RHopperGold;
+	public static Block  RHopperBlack;
 	
 	public static Item anzenMet, sagyougi, sagyougiB, anzenBoots;
 	
@@ -70,6 +73,8 @@ public class DCsIronChain{
 	public int blockIdFloodLight = 630;
 	public int blockIdDCPart = 631;
 	public int blockIdRHopper = 632;
+	public int blockIdRHGold = 633;
+	public int blockIdRHBlack = 634;
 	
 	public int itemIdAnzenMet = 6035;
 	public int itemIdSagyougi = 6036;
@@ -98,6 +103,8 @@ public class DCsIronChain{
 			Property blockDCflood = cfg.getBlock("FloodLight", blockIdFloodLight);
 			Property blockDCpart = cfg.getBlock("LightBlock", blockIdDCPart);
 			Property blockRHopper = cfg.getBlock("UpwardHopper", blockIdRHopper);
+			Property blockRHGold = cfg.getBlock("UpwardHopper_Gold", blockIdRHGold);
+			Property blockRHBlack = cfg.getBlock("UpwardHopper_Black", blockIdRHBlack);
 			
 			Property itemAnzenMet = cfg.getItem("AnzenHelmet", itemIdAnzenMet);
 			Property itemSagyougi = cfg.getItem("WorkerWear", itemIdSagyougi);
@@ -113,6 +120,8 @@ public class DCsIronChain{
 			blockIdFloodLight = blockDCflood.getInt();
 			blockIdDCPart = blockDCpart.getInt();
 			blockIdRHopper = blockRHopper.getInt();
+			blockIdRHGold = blockRHGold.getInt();
+			blockIdRHBlack = blockRHBlack.getInt();
 			
 			itemIdAnzenMet = itemAnzenMet.getInt();
 			itemIdSagyougi = itemSagyougi.getInt();
@@ -159,6 +168,14 @@ public class DCsIronChain{
 				setUnlocalizedName("defeatedcrow.upwardHopper").
 				setCreativeTab(CreativeTabs.tabRedstone);
 		
+		RHopperGold = (new BlockRHopperGold(blockIdRHGold)).
+				setUnlocalizedName("defeatedcrow.upwardHopper_gold").
+				setCreativeTab(CreativeTabs.tabRedstone);
+		
+		RHopperBlack = (new BlockRHopperBlack(blockIdRHBlack)).
+				setUnlocalizedName("defeatedcrow.upwardHopper_black").
+				setCreativeTab(CreativeTabs.tabRedstone);
+		
 		//int index1 = ModLoader.addArmor("anzenarmor");
 		
 		anzenMet = (new ItemAnzenArmor(itemIdAnzenMet - 256, EnumArmorMaterial.CHAIN, DCsIronChain.proxy.addArmor("anzenarmor"), 0)).
@@ -179,6 +196,12 @@ public class DCsIronChain{
 		GameRegistry.registerBlock(floodLight, "floodLight");
 		GameRegistry.registerBlock(DCLightPart, "DCLightPart");
 		GameRegistry.registerBlock(RHopper, "UpwardHopper");
+		GameRegistry.registerBlock(RHopperGold, "UpwardHopper_gold");
+		GameRegistry.registerBlock(RHopperBlack, "UpwardHopper_black");
+		
+		GameRegistry.registerItem(anzenMet, "anzen_met");
+		GameRegistry.registerItem(sagyougi, "sagyougi");
+		GameRegistry.registerItem(anzenBoots, "anzen_boots");
 		
 	}
 	

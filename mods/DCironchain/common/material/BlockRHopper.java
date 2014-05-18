@@ -1,4 +1,4 @@
-package mods.DCironchain.common;
+package mods.DCironchain.common.material;
 
 import java.util.Random;
 
@@ -235,6 +235,7 @@ public class BlockRHopper extends BlockContainer{
         return par1 == 0 ? BlockHopper.getHopperIcon("hopper_outside") : BlockHopper.getHopperIcon("hopper_inside");
     }
 	
+	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister)
     {
         this.baseIcon = par1IconRegister.registerIcon("hopper_outside");

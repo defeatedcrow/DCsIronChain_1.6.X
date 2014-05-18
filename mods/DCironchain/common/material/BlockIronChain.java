@@ -1,4 +1,4 @@
-package mods.DCironchain.common;
+package mods.DCironchain.common.material;
 
 import static net.minecraftforge.common.ForgeDirection.DOWN;
 import static net.minecraftforge.common.ForgeDirection.NORTH;
@@ -11,6 +11,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
+import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -131,6 +132,7 @@ public class BlockIronChain extends Block{
         else if (this.canPlace(itemstack))
         {
             int placeID = itemstack.itemID;
+            int placeMeta = itemstack.getItemDamage();
             
             if (l < 0)
             {
@@ -138,7 +140,7 @@ public class BlockIronChain extends Block{
             }
             else if ((l < 65) && par1World.isAirBlock(par2, (par3 - l), par4))
             {
-            	par1World.setBlock(par2, (par3 - l), par4, placeID);
+            	par1World.setBlock(par2, (par3 - l), par4, placeID, placeMeta, 3);
             	par1World.playSoundAtEntity(par5EntityPlayer, "crowsdefeat:chain", 1.0F, 0.7F);
             	if (!par5EntityPlayer.capabilities.isCreativeMode && --itemstack.stackSize <= 0)
                 {
@@ -164,19 +166,16 @@ public class BlockIronChain extends Block{
             	if (itemstack.itemID < 4095)
             	{
             		Block block = Block.blocksList[itemstack.itemID];
-                	if(block != null && block instanceof Block && Block.opaqueCubeLookup[itemstack.itemID])
+                	if(block != null && block instanceof Block && block.canBlockStay(par1World, par2, (par3 - l), par4))
                 	{
-                		par1World.setBlock(par2, (par3 - l), par4, block.blockID, itemstack.getItemDamage(), 2);
+                		BlockSand.fallInstantly = true;
+                		par1World.setBlock(par2, (par3 - l), par4, block.blockID, itemstack.getItemDamage(), 3);
+                		BlockSand.fallInstantly = false;
                     	par1World.playSoundAtEntity(par5EntityPlayer, "crowsdefeat:chain", 1.0F, 0.7F);
                     	if (!par5EntityPlayer.capabilities.isCreativeMode && --itemstack.stackSize <= 0)
                         {
                             par5EntityPlayer.inventory.setInventorySlotContents(par5EntityPlayer.inventory.currentItem, (ItemStack)null);
                         }
-                    	
-                    	if (DCsIronChain.getLoadIC2 && !par1World.isAirBlock(par2, (par3 - l), par4) && block instanceof IWrenchable)
-                    	{
-                    		par1World.setBlockMetadataWithNotify(par2, (par3 - l), par4, 2, 2);
-                    	}
                     	return true;
                 	}
                 	else

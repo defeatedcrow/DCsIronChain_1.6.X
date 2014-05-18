@@ -36,6 +36,8 @@ public class PacketHandler implements IPacketHandler
                         int y = bis.readInt();
                         int z = bis.readInt();
                         int TransferCooldown = bis.readInt();
+                        short Mode = bis.readShort();
+                        
                         boolean hasStacks = bis.readByte() != 0;
                         if (hasStacks)
                         {
@@ -60,7 +62,7 @@ public class PacketHandler implements IPacketHandler
                 	int x = bis.readInt();
     				int y = bis.readInt();
     				int z = bis.readInt();
-    				int direction = bis.readByte();
+    				byte direction = bis.readByte();
     				
     				World world = DCsIronChain.proxy.getClientWorld();
     				if (world == null) {
@@ -71,7 +73,7 @@ public class PacketHandler implements IPacketHandler
     				
     				if (tile instanceof TileEntityFloodLight) {
     					TileEntityFloodLight tileLight = (TileEntityFloodLight)tile;
-    					tileLight.setDirection();
+    					tileLight.setDirectionByte(direction);;
     				}
 //                }
 //                catch (IOException e)
@@ -92,6 +94,8 @@ public class PacketHandler implements IPacketHandler
                 int y = tileEntityRHopper.yCoord;
                 int z = tileEntityRHopper.zCoord;
                 int TransferCooldown = tileEntityRHopper.getCoolTime();
+                short Mode = tileEntityRHopper.getMode();
+                
                 ItemStack[] items = tileEntityRHopper.getItems();
                 boolean hasStacks = (items != null);
 
@@ -101,6 +105,7 @@ public class PacketHandler implements IPacketHandler
                         dos.writeInt(y);
                         dos.writeInt(z);
                         dos.writeInt(TransferCooldown);
+                        dos.writeShort(Mode);
                         dos.writeByte(hasStacks? 1 : 0);
                         if (hasStacks)
                         {

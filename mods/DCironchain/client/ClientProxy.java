@@ -11,6 +11,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import mods.DCironchain.common.CommonProxy;
 import mods.DCironchain.entity.TileEntityFloodLight;
 import mods.DCironchain.entity.TileEntityRHopper;
+import mods.DCironchain.entity.TileEntityRHopperBlack;
+import mods.DCironchain.entity.TileEntityRHopperGold;
 
 
 @SideOnly(Side.CLIENT)
@@ -42,6 +44,8 @@ public class ClientProxy extends CommonProxy {
 	
 	public void registerTile() {
 		GameRegistry.registerTileEntity(TileEntityRHopper.class, "TileEntityRHopper");
+		GameRegistry.registerTileEntity(TileEntityRHopperGold.class, "TileEntityRHopperGold");
+		GameRegistry.registerTileEntity(TileEntityRHopperBlack.class, "TileEntityRHopperBlack");
 		ClientRegistry.registerTileEntity(TileEntityFloodLight.class, "TileEntityFloodLight", new TileRenderFloodLight());
 	}
 }

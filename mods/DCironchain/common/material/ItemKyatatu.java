@@ -1,4 +1,4 @@
-package mods.DCironchain.common;
+package mods.DCironchain.common.material;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

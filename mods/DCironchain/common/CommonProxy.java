@@ -3,8 +3,7 @@ package mods.DCironchain.common;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import mods.DCironchain.entity.ContainerRHopper;
-import mods.DCironchain.entity.TileEntityFloodLight;
-import mods.DCironchain.entity.TileEntityRHopper;
+import mods.DCironchain.entity.*;
 import mods.DCironchain.gui.GuiRHopper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,6 +29,8 @@ public class CommonProxy implements IGuiHandler{
 	
 	public void registerTile() {
 		GameRegistry.registerTileEntity(TileEntityRHopper.class, "TileEntityRHopper");
+		GameRegistry.registerTileEntity(TileEntityRHopperGold.class, "TileEntityRHopperGold");
+		GameRegistry.registerTileEntity(TileEntityRHopperBlack.class, "TileEntityRHopperBlack");
 		GameRegistry.registerTileEntity(TileEntityFloodLight.class, "TileEntityFloodLight");
 	}
 

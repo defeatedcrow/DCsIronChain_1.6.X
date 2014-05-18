@@ -1,4 +1,4 @@
-package mods.DCironchain.common;
+package mods.DCironchain.common.material;
 
 import static net.minecraftforge.common.ForgeDirection.EAST;
 import static net.minecraftforge.common.ForgeDirection.NORTH;
@@ -204,10 +204,11 @@ public class BlockAnchorBolt extends Block{
         else if (this.canPlace(itemstack))
         {
             int placeID = itemstack.itemID;
+            int placeMeta = itemstack.getItemDamage(); 
             
             if ((l < 65) && par1World.isAirBlock(par2, (par3 - l - 1), par4))
             {
-            	par1World.setBlock(par2, (par3 - l - 1), par4, placeID);
+            	par1World.setBlock(par2, (par3 - l - 1), par4, placeID, placeMeta, 3);
             	par1World.playSoundAtEntity(par5EntityPlayer, "crowsdefeat:chain", 1.0F, 0.7F);
             	if (!par5EntityPlayer.capabilities.isCreativeMode && --itemstack.stackSize <= 0)
                 {

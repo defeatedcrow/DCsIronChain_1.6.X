@@ -26,8 +26,8 @@ public class RenderRHopper implements ISimpleBlockRenderingHandler{
 		
 		int meta = metadata;
 		int side = meta & 7;
-		this.baseIcon = DCsIronChain.RHopper.getBlockTextureFromSide(0);
-		this.insideIcon = DCsIronChain.RHopper.getBlockTextureFromSide(1);
+		this.baseIcon = block.getBlockTextureFromSide(0);
+		this.insideIcon = block.getBlockTextureFromSide(1);
 		
 		if (modelID == this.getRenderId())
 		{
@@ -53,8 +53,8 @@ public class RenderRHopper implements ISimpleBlockRenderingHandler{
 		
 		int meta = world.getBlockMetadata(x, y, z);
 		int side = meta & 7;
-		this.baseIcon = DCsIronChain.RHopper.getBlockTextureFromSide(0);
-		this.insideIcon = DCsIronChain.RHopper.getBlockTextureFromSide(1);
+		this.baseIcon = block.getBlockTextureFromSide(0);
+		this.insideIcon = block.getBlockTextureFromSide(1);
 		
 		if (modelId == this.getRenderId())
 		{

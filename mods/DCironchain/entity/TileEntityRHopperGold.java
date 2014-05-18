@@ -34,9 +34,9 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeConnection.ConnectOverride;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
-public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnection, ISpecialInventory
+/**基本的にはRHopperと同様の動作。ただし、輸送スタック数だけが異なる。*/
+public class TileEntityRHopperGold extends TileEntityRHopper
 {
-
 	protected static short mode = 0;
 	
     protected int transferCooldown = -1;
@@ -44,6 +44,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
     public ItemStack[] hopperItemStacks = new ItemStack[5];
 
     //NBT
+    @Override
     public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readFromNBT(par1NBTTagCompound);
@@ -65,6 +66,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
         }
     }
 
+    @Override
     public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
@@ -211,7 +213,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
                     {
                         ItemStack current = this.getStackInSlot(i);
                         DCsLog.debugTrace("Current size: " + current.stackSize);
-                    	ItemStack itemstack[] = this.extractItem(true, from, 1);
+                    	ItemStack itemstack[] = this.extractItem(true, from, 64);
                     	
                         for (int l = 0; l < itemstack.length; l++)
                         {
@@ -246,7 +248,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
                 if (this.getStackInSlot(i) != null)
                 {
                     ItemStack itemstack = this.getStackInSlot(i).copy();
-                    ItemStack itemstack1 = insertStack(iinventory, this.decrStackSize(i, 1), Facing.oppositeSide[BlockRHopper.getDirectionFromMetadata(this.getBlockMetadata())]);
+                    ItemStack itemstack1 = insertStack(iinventory, this.decrStackSize(i, 64), Facing.oppositeSide[BlockRHopper.getDirectionFromMetadata(this.getBlockMetadata())]);
 
                     if (itemstack1 == null || itemstack1.stackSize == 0)
                     {
@@ -318,7 +320,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
         if (itemstack != null && canExtractItemFromInventory(par1IInventory, itemstack, par2, par3))
         {
             ItemStack itemstack1 = itemstack.copy();
-            ItemStack itemstack2 = insertStack(par0Hopper, par1IInventory.decrStackSize(par2, 1), -1);
+            ItemStack itemstack2 = insertStack(par0Hopper, par1IInventory.decrStackSize(par2, 64), -1);
 
             if (itemstack2 == null || itemstack2.stackSize == 0)
             {
@@ -600,7 +602,7 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
 	@Override
 	public String getInvName() {
 		
-		return "Upward Hopper";
+		return "Golden Upward Hopper";
 	}
 
 	@Override
@@ -685,10 +687,10 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
 	        ItemStack stack = inv.getStackInSlot(i);
 
 	        if (doRemove) {
-	          extract = inv.decrStackSize(i, 1); break;
+	          extract = inv.decrStackSize(i, 64); break;
 	        }
 	        extract = stack.copy();
-	        extract.stackSize = 1;
+	        //extract.stackSize = 1;
 
 	        break;
 	      }

@@ -1,4 +1,4 @@
-package mods.DCironchain.common;
+package mods.DCironchain.common.material;
 
 import static net.minecraftforge.common.ForgeDirection.DOWN;
 import static net.minecraftforge.common.ForgeDirection.UP;

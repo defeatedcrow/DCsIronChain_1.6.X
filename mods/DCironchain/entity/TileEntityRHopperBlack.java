@@ -21,7 +21,9 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.Hopper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -86,13 +88,6 @@ public class TileEntityRHopperBlack extends TileEntityRHopper
         par1NBTTagCompound.setTag("Items", nbttaglist);
         par1NBTTagCompound.setInteger("TransferCooldown", this.transferCooldown);
         par1NBTTagCompound.setShort("Mode", this.mode);
-    }
-
-    //packet
-    @Override
-    public Packet getDescriptionPacket()
-    {
-            return PacketHandler.getPacket(this);
     }
 
     //read
@@ -445,9 +440,9 @@ public class TileEntityRHopperBlack extends TileEntityRHopper
 
             if (flag)
             {
-                if (par0IInventory instanceof InventoryRHopper)
+            	if (par0IInventory instanceof TileEntityRHopper)
                 {
-                    ((InventoryRHopper) par0IInventory).RHopper().setTransferCooldown(4);
+                    ((TileEntityRHopper) par0IInventory).setTransferCooldown(4);
                     par0IInventory.onInventoryChanged();
                 }
 

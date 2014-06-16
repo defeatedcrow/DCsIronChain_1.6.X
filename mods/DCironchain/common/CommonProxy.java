@@ -31,6 +31,8 @@ public class CommonProxy implements IGuiHandler{
 		GameRegistry.registerTileEntity(TileEntityRHopper.class, "TileEntityRHopper");
 		GameRegistry.registerTileEntity(TileEntityRHopperGold.class, "TileEntityRHopperGold");
 		GameRegistry.registerTileEntity(TileEntityRHopperBlack.class, "TileEntityRHopperBlack");
+		GameRegistry.registerTileEntity(TileEntityHopperBlack.class, "TileEntityHopperBlack");
+		GameRegistry.registerTileEntity(TileEntityHopperGold.class, "TileEntityHopperGold");
 		GameRegistry.registerTileEntity(TileEntityFloodLight.class, "TileEntityFloodLight");
 	}
 

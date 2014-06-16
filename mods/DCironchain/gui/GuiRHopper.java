@@ -1,7 +1,6 @@
 package mods.DCironchain.gui;
 
 import mods.DCironchain.entity.ContainerRHopper;
-import mods.DCironchain.entity.InventoryRHopper;
 import mods.DCironchain.entity.TileEntityRHopper;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;

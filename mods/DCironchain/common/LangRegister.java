@@ -30,6 +30,12 @@ public class LangRegister {
 		LanguageRegistry.addName(DCsIronChain.RHopperBlack, "Black Upward Hopper");
 		LanguageRegistry.instance().addNameForObject(DCsIronChain.RHopperBlack, "ja_JP", "黒の逆向きホッパー");
 		
+		LanguageRegistry.addName(DCsIronChain.hopperGold, "Golden Hopper");
+		LanguageRegistry.instance().addNameForObject(DCsIronChain.hopperGold, "ja_JP", "金色のホッパー");
+		
+		LanguageRegistry.addName(DCsIronChain.hopperBlack, "Black Hopper");
+		LanguageRegistry.instance().addNameForObject(DCsIronChain.hopperBlack, "ja_JP", "黒のホッパー");
+		
 		LanguageRegistry.addName(DCsIronChain.anzenMet, "Worker Helmet");
 		LanguageRegistry.instance().addNameForObject(DCsIronChain.anzenMet, "ja_JP", "安全帽");
 		

@@ -39,7 +39,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(
 		modid = "DCsIronChain",
 		name = "DCsIronChainMod",
-		version = "1.6.2_1.2a",
+		version = "1.6.2_1.2b",
 		dependencies = "required-after:Forge@[9.10,);required-after:FML@[6.2.0,);after:BuildCraft|Core"
 		)
 @NetworkMod(
@@ -64,6 +64,8 @@ public class DCsIronChain{
 	public static Block  RHopper;
 	public static Block  RHopperGold;
 	public static Block  RHopperBlack;
+	public static Block  hopperGold;
+	public static Block  hopperBlack;
 	
 	public static Item anzenMet, sagyougi, sagyougiB, anzenBoots;
 	
@@ -75,6 +77,8 @@ public class DCsIronChain{
 	public int blockIdRHopper = 632;
 	public int blockIdRHGold = 633;
 	public int blockIdRHBlack = 634;
+	public int blockIdHGold = 635;
+	public int blockIdHBlack = 636;
 	
 	public int itemIdAnzenMet = 6035;
 	public int itemIdSagyougi = 6036;
@@ -84,6 +88,9 @@ public class DCsIronChain{
 	public static int guiIdRHopper = 1;
 	public static int modelRHopper;
 	public static int modelFLight;
+	public static int modelHopper2;
+	
+	public static int RHGoldCoolTime = 4;
 	
 	public static boolean getLoadIC2 = false;
 	public static boolean getLoadBC = false;
@@ -105,6 +112,8 @@ public class DCsIronChain{
 			Property blockRHopper = cfg.getBlock("UpwardHopper", blockIdRHopper);
 			Property blockRHGold = cfg.getBlock("UpwardHopper_Gold", blockIdRHGold);
 			Property blockRHBlack = cfg.getBlock("UpwardHopper_Black", blockIdRHBlack);
+			Property blockHGold = cfg.getBlock("Hopper_Gold", blockIdHGold);
+			Property blockHBlack = cfg.getBlock("Hopper_Black", blockIdHBlack);
 			
 			Property itemAnzenMet = cfg.getItem("AnzenHelmet", itemIdAnzenMet);
 			Property itemSagyougi = cfg.getItem("WorkerWear", itemIdSagyougi);
@@ -113,6 +122,7 @@ public class DCsIronChain{
 			
 			Property notUseLightBlock = cfg.get("Setting", "NotUseLightBlock", notUseLight, "Floodlight block does not put a invisible light block.");
 			Property visibleLightBlock = cfg.get("Setting", "VisibleLightBlock", visibleLight, "Allow invisible light block be visible.");
+			Property setCoolTime = cfg.get("Setting", "GoldenHopperCoolingTime", RHGoldCoolTime, "Set the cooling time for Golden Upward Hopper.");
 			
 			blockIdDCChain = blockChain.getInt();
 			blockIdDCAnchor = blockAnchor.getInt();
@@ -122,6 +132,8 @@ public class DCsIronChain{
 			blockIdRHopper = blockRHopper.getInt();
 			blockIdRHGold = blockRHGold.getInt();
 			blockIdRHBlack = blockRHBlack.getInt();
+			blockIdHGold = blockHGold.getInt();
+			blockIdHBlack = blockHBlack.getInt();
 			
 			itemIdAnzenMet = itemAnzenMet.getInt();
 			itemIdSagyougi = itemSagyougi.getInt();
@@ -130,6 +142,7 @@ public class DCsIronChain{
 			
 			notUseLight = notUseLightBlock.getBoolean(notUseLight);
 			visibleLight = visibleLightBlock.getBoolean(visibleLight);
+			RHGoldCoolTime = setCoolTime.getInt();
 
 		}
 		catch (Exception e)
@@ -168,12 +181,20 @@ public class DCsIronChain{
 				setUnlocalizedName("defeatedcrow.upwardHopper").
 				setCreativeTab(CreativeTabs.tabRedstone);
 		
-		RHopperGold = (new BlockRHopperGold(blockIdRHGold)).
+		RHopperGold = (new BlockRHopperGold(blockIdRHGold, true)).
 				setUnlocalizedName("defeatedcrow.upwardHopper_gold").
 				setCreativeTab(CreativeTabs.tabRedstone);
 		
-		RHopperBlack = (new BlockRHopperBlack(blockIdRHBlack)).
+		hopperGold = (new BlockRHopperGold(blockIdHGold, false)).
+				setUnlocalizedName("defeatedcrow.nextHopper_gold").
+				setCreativeTab(CreativeTabs.tabRedstone);
+		
+		RHopperBlack = (new BlockRHopperBlack(blockIdRHBlack, true)).
 				setUnlocalizedName("defeatedcrow.upwardHopper_black").
+				setCreativeTab(CreativeTabs.tabRedstone);
+		
+		hopperBlack = (new BlockRHopperBlack(blockIdHBlack, false)).
+				setUnlocalizedName("defeatedcrow.nextHopper_black").
 				setCreativeTab(CreativeTabs.tabRedstone);
 		
 		//int index1 = ModLoader.addArmor("anzenarmor");
@@ -195,9 +216,11 @@ public class DCsIronChain{
 		GameRegistry.registerBlock(kyatatu, ItemKyatatu.class, "kyatatu");
 		GameRegistry.registerBlock(floodLight, "floodLight");
 		GameRegistry.registerBlock(DCLightPart, "DCLightPart");
-		GameRegistry.registerBlock(RHopper, "UpwardHopper");
-		GameRegistry.registerBlock(RHopperGold, "UpwardHopper_gold");
-		GameRegistry.registerBlock(RHopperBlack, "UpwardHopper_black");
+		GameRegistry.registerBlock(RHopper, "upwardHopper");
+		GameRegistry.registerBlock(RHopperGold, "upwardHopper_gold");
+		GameRegistry.registerBlock(RHopperBlack, "upwardHopper_black");
+		GameRegistry.registerBlock(hopperGold, "nextHopper_gold");
+		GameRegistry.registerBlock(hopperBlack, "nextHopper_black");
 		
 		GameRegistry.registerItem(anzenMet, "anzen_met");
 		GameRegistry.registerItem(sagyougi, "sagyougi");
@@ -211,6 +234,7 @@ public class DCsIronChain{
 		//Registering new render
 		this.modelRHopper = proxy.getRenderID();
 		this.modelFLight = proxy.getRenderID();
+		this.modelHopper2 = proxy.getRenderID();
 		proxy.registerRenderers();
 		
 		//Registering new recipe

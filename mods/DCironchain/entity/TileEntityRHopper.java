@@ -19,7 +19,9 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.Hopper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -88,9 +90,15 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
 
     //packet
     @Override
-    public Packet getDescriptionPacket()
-    {
-            return PacketHandler.getPacket(this);
+	public Packet getDescriptionPacket() {
+        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+        this.writeToNBT(nbtTagCompound);
+        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, nbtTagCompound);
+	}
+ 
+	@Override
+    public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
+        this.readFromNBT(pkt.data);
     }
 
     //read
@@ -443,9 +451,9 @@ public class TileEntityRHopper extends TileEntity implements Hopper, IPipeConnec
 
             if (flag)
             {
-                if (par0IInventory instanceof InventoryRHopper)
+                if (par0IInventory instanceof TileEntityRHopper)
                 {
-                    ((InventoryRHopper) par0IInventory).RHopper().setTransferCooldown(4);
+                    ((TileEntityRHopper) par0IInventory).setTransferCooldown(4);
                     par0IInventory.onInventoryChanged();
                 }
 

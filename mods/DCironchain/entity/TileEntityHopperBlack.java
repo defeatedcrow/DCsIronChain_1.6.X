@@ -3,6 +3,8 @@ package mods.DCironchain.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import mods.DCironchain.Load.BCLoadHandler;
 import mods.DCironchain.common.DCsIronChain;
 import mods.DCironchain.common.DCsLog;
@@ -19,13 +21,16 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.Hopper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Facing;
+import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -34,8 +39,7 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeConnection.ConnectOverride;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
-/**基本的にはRHopperと同様の動作。ただし、輸送スタック数だけが異なる。*/
-public class TileEntityRHopperGold extends TileEntityRHopper
+public class TileEntityHopperBlack extends TileEntityRHopper
 {
 	protected static short mode = 0;
 	
@@ -44,7 +48,6 @@ public class TileEntityRHopperGold extends TileEntityRHopper
     public ItemStack[] hopperItemStacks = new ItemStack[5];
 
     //NBT
-    @Override
     public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readFromNBT(par1NBTTagCompound);
@@ -66,7 +69,6 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         }
     }
 
-    @Override
     public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
@@ -158,19 +160,14 @@ public class TileEntityRHopperGold extends TileEntityRHopper
     {
         if (this.worldObj != null && !this.worldObj.isRemote)
         {
-        	//クールタイム中・RS信号ONで停止していない
             if (!this.isCoolingDown() && BlockRHopper.getIsBlockNotPoweredFromMetadata(this.getBlockMetadata()))
             {
-            	//まず送り出す方を試す
                 boolean flag = this.insertItemToInventory();
-                
-                //次に吸引を試す
                 flag = suckItemsIntoHopper(this) || flag;
 
                 if (flag)
                 {
-                	//コンフィグで設定したクールタイム
-                    this.setTransferCooldown(this.getCoolingTimefromConfig());
+                    this.setTransferCooldown(4);
                     this.onInventoryChanged();
                     return true;
                 }
@@ -195,7 +192,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         {
         	//接続しているパイプのリスト（方向）
             ForgeDirection from = ForgeDirection.getOrientation(this.getBlockMetadata()).getOpposite();//メタデータを得る
-            if (from == ForgeDirection.UP) from = ForgeDirection.DOWN;//下向きに設置した場合は真上を向いている
+            if (from == ForgeDirection.DOWN) from = ForgeDirection.UP;//下向きに設置した場合は真上を向いている
         	ArrayList<ForgeDirection> dir = BCLoadHandler.getPipeConected(this.worldObj, this.xCoord, this.yCoord, this.zCoord, from);
 
         	DCsLog.debugTrace("CurrentMetadata: " + this.getBlockMetadata());
@@ -211,7 +208,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
                     {
                         ItemStack current = this.getStackInSlot(i);
                         DCsLog.debugTrace("Current size: " + current.stackSize);
-                    	ItemStack itemstack[] = this.extractItem(true, from, 64);
+                    	ItemStack itemstack[] = this.extractItem(true, from, 1);
                     	
                         for (int l = 0; l < itemstack.length; l++)
                         {
@@ -233,7 +230,6 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         }
         
     	//バニラホッパーの挙動
-    	//送り先のインベントリ
     	IInventory iinventory = this.getOutputInventory();
 
         if (iinventory == null || tryInsert)//パイプへの搬出がうまくいった場合は何もしない
@@ -242,29 +238,20 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         }
         else
         {
-            for (int i = 0; i < this.getSizeInventory(); ++i)//挙動の変更ポイントその一
+            for (int i = 0; i < this.getSizeInventory(); ++i)//バニラホッパーと同じ挙動
             {
-            	/*スタック状態で送り出すため、少し改変する*/
                 if (this.getStackInSlot(i) != null)
                 {
-                	//カレントスタックのコピー
                     ItemStack itemstack = this.getStackInSlot(i).copy();
-                    //decrStackSizeを呼ばずにコピーを送る。
-                    ItemStack itemstack1 = insertStack(iinventory, itemstack, Facing.oppositeSide[BlockRHopper.getDirectionFromMetadata(this.getBlockMetadata())]);
-                    
-                    //itemstack1で上書き。コレでよかったのかよ…
-                    if (itemstack1 != null && itemstack1.stackSize != 0)
+                    ItemStack itemstack1 = insertStack(iinventory, this.decrStackSize(i, 1), Facing.oppositeSide[BlockRHopper.getDirectionFromMetadata(this.getBlockMetadata())]);
+
+                    if (itemstack1 == null || itemstack1.stackSize == 0)
                     {
-                    	this.setInventorySlotContents(i, itemstack1);
-                    	this.onInventoryChanged();
-                    	return true;
-                    }
-                    else
-                    {
-                        this.setInventorySlotContents(i, (ItemStack)null);
-                        this.onInventoryChanged();
+                        iinventory.onInventoryChanged();
                         return true;
                     }
+
+                    this.setInventorySlotContents(i, itemstack);
                 }
             }
 
@@ -309,7 +296,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         }
         else
         {
-            EntityItem entityitem = getEntityAbove(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() - 1.0D, par0Hopper.getZPos());
+            EntityItem entityitem = getEntityAbove(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() + 1.0D, par0Hopper.getZPos());
 
             if (entityitem != null)
             {
@@ -328,18 +315,15 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         if (itemstack != null && canExtractItemFromInventory(par1IInventory, itemstack, par2, par3))
         {
             ItemStack itemstack1 = itemstack.copy();
-            ItemStack itemstack2 = insertStack(par0Hopper, itemstack1, -1);
-            
-            if (itemstack2 != null && itemstack2.stackSize != 0)
+            ItemStack itemstack2 = insertStack(par0Hopper, par1IInventory.decrStackSize(par2, 1), -1);
+
+            if (itemstack2 == null || itemstack2.stackSize == 0)
             {
-            	par1IInventory.setInventorySlotContents(par2, itemstack2);
-            	return true;
-            }
-            else
-            {
-            	par1IInventory.setInventorySlotContents(par2, (ItemStack)null);
+                par1IInventory.onInventoryChanged();
                 return true;
             }
+
+            par1IInventory.setInventorySlotContents(par2, itemstack1);
         }
 
         return false;
@@ -378,7 +362,6 @@ public class TileEntityRHopperGold extends TileEntityRHopper
      */
     public static ItemStack insertStack(IInventory par0IInventory, ItemStack par1ItemStack, int par2)
     {
-    	//まずインベントリの種別判定。ISideの場合、スロットの確認をする
         if (par0IInventory instanceof ISidedInventory && par2 > -1)
         {
             ISidedInventory isidedinventory = (ISidedInventory)par0IInventory;
@@ -386,7 +369,6 @@ public class TileEntityRHopperGold extends TileEntityRHopper
 
             for (int j = 0; j < aint.length && par1ItemStack != null && par1ItemStack.stackSize > 0; ++j)
             {
-            	//すべての挿入可能スロットに対して挿入を試みる。
                 par1ItemStack = insertItemstack(par0IInventory, par1ItemStack, aint[j], par2);
             }
         }
@@ -396,7 +378,6 @@ public class TileEntityRHopperGold extends TileEntityRHopper
 
             for (int l = 0; l < k && par1ItemStack != null && par1ItemStack.stackSize > 0; ++l)
             {
-            	//IInventoryの場合も同じ。
                 par1ItemStack = insertItemstack(par0IInventory, par1ItemStack, l, par2);
             }
         }
@@ -423,7 +404,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         if (par0IInventory instanceof ISidedInventory) {
         	return ((ISidedInventory)par0IInventory).canExtractItem(par2, par1ItemStack, par3);
         }
-        else if (par0IInventory instanceof TileEntityRHopper) {
+        else if (par0IInventory instanceof TileEntityHopperBlack) {
         	return false;
         }
         else if (par0IInventory instanceof TileEntityHopper) {
@@ -450,7 +431,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
             }
             else if (areItemStacksEqualItem(itemstack1, par1ItemStack))
             {
-                int k = itemstack1.getMaxStackSize() - itemstack1.stackSize;
+                int k = par1ItemStack.getMaxStackSize() - itemstack1.stackSize;
                 int l = Math.min(par1ItemStack.stackSize, k);
                 par1ItemStack.stackSize -= l;
                 itemstack1.stackSize += l;
@@ -464,9 +445,9 @@ public class TileEntityRHopperGold extends TileEntityRHopper
                     ((TileEntityRHopper) par0IInventory).setTransferCooldown(4);
                     par0IInventory.onInventoryChanged();
                 }
+
+                par0IInventory.onInventoryChanged();
             }
-            
-            par0IInventory.onInventoryChanged();
         }
 
         return par1ItemStack;
@@ -480,16 +461,18 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         return iinventory;
     }
 
-    //1ブロック下のインベントリ取得
+    //1ブロック上のインベントリ取得
     public static IInventory getInventoryAboveHopper(Hopper par0Hopper)
     {
-        return getInventoryAtLocation(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() - 1.0D, par0Hopper.getZPos());
+        return getInventoryAtLocation(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() + 1.0D, par0Hopper.getZPos());
     }
 
     //EntityItemの吸引範囲
     public static EntityItem getEntityAbove(World par0World, double par1, double par3, double par5)
     {
-        List list = par0World.selectEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getAABBPool().getAABB(par1 - 1.0D, par3, par5 - 1.0D, par1 + 2.0D, par3 + 2.0D, par5 + 2.0D), IEntitySelector.selectAnything);
+    	double area = mode;
+    	if (area <= 1.0D) area = 1.0D;
+        List list = par0World.selectEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getAABBPool().getAABB(par1 - (area), par3 - 1, par5 - (area), par1 + area + 1, par3 + area, par5 + area + 1), IEntitySelector.selectAnything);
         return list.size() > 0 ? (EntityItem)list.get(0) : null;
     }
 
@@ -616,7 +599,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
 	@Override
 	public String getInvName() {
 		
-		return "Golden Upward Hopper";
+		return "Black Upward Hopper";
 	}
 
 	@Override
@@ -692,7 +675,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
 	@Override
 	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount)
 	  {
-	    TileEntityRHopper inv = this;
+	    TileEntityHopperBlack inv = this;
 	    ItemStack extract = null;
 
 	    for (int i = 0; i < 5; i++) {
@@ -701,10 +684,10 @@ public class TileEntityRHopperGold extends TileEntityRHopper
 	        ItemStack stack = inv.getStackInSlot(i);
 
 	        if (doRemove) {
-	          extract = inv.decrStackSize(i, 64); break;
+	          extract = inv.decrStackSize(i, 1); break;
 	        }
 	        extract = stack.copy();
-	        //extract.stackSize = 1;
+	        extract.stackSize = 1;
 
 	        break;
 	      }
@@ -741,8 +724,8 @@ public class TileEntityRHopperGold extends TileEntityRHopper
 	                }
 	                else if (areItemStacksEqualItem(current, stack))
 	                {
-	                    int k = stack.getMaxStackSize() - stack.stackSize;
-	                    int j = Math.min(current.stackSize, k);
+	                    int k = stack.getMaxStackSize() - current.stackSize;
+	                    int j = Math.min(stack.stackSize, k);
 	                    stack.stackSize -= j;
 	                    current.stackSize += j;
 	                    removeItemstack = j;
@@ -775,10 +758,5 @@ public class TileEntityRHopperGold extends TileEntityRHopper
 			return ConnectOverride.CONNECT;
 		}
 		else return ConnectOverride.DISCONNECT;
-	}
-	
-	private static int getCoolingTimefromConfig()
-	{
-		return MathHelper.clamp_int(DCsIronChain.RHGoldCoolTime, 0, 60);
 	}
 }

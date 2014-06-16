@@ -84,6 +84,30 @@ public class RecipeRegister {
     			  Character.valueOf('Z'), DCsIronChain.RHopper,
     			  });
       
+      GameRegistry.addRecipe(
+				 new ShapedOreRecipe(
+	    		  new ItemStack(DCsIronChain.RHopperBlack, 1),
+	    		  new Object[]{"X",
+	    			  Character.valueOf('X'), new ItemStack(DCsIronChain.hopperBlack, 1)}));
+      
+      GameRegistry.addRecipe(
+				 new ShapedOreRecipe(
+	    		  new ItemStack(DCsIronChain.RHopperGold, 1),
+	    		  new Object[]{"X",
+	    			  Character.valueOf('X'), new ItemStack(DCsIronChain.hopperGold, 1)}));
+      
+      GameRegistry.addRecipe(
+				 new ShapedOreRecipe(
+	    		  new ItemStack(DCsIronChain.hopperBlack, 1),
+	    		  new Object[]{"X",
+	    			  Character.valueOf('X'), new ItemStack(DCsIronChain.RHopperBlack, 1)}));
+   
+   GameRegistry.addRecipe(
+				 new ShapedOreRecipe(
+	    		  new ItemStack(DCsIronChain.hopperGold, 1),
+	    		  new Object[]{"X",
+	    			  Character.valueOf('X'), new ItemStack(DCsIronChain.RHopperGold, 1)}));
+      
       //use bronze recipe
       
       GameRegistry.addRecipe(

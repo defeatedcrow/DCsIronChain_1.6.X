@@ -35,7 +35,7 @@ import buildcraft.api.transport.IPipeConnection.ConnectOverride;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
 /**基本的にはRHopperと同様の動作。ただし、輸送スタック数だけが異なる。*/
-public class TileEntityRHopperGold extends TileEntityRHopper
+public class TileEntityHopperGold extends TileEntityRHopper
 {
 	protected static short mode = 0;
 	
@@ -195,7 +195,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         {
         	//接続しているパイプのリスト（方向）
             ForgeDirection from = ForgeDirection.getOrientation(this.getBlockMetadata()).getOpposite();//メタデータを得る
-            if (from == ForgeDirection.UP) from = ForgeDirection.DOWN;//下向きに設置した場合は真上を向いている
+            if (from == ForgeDirection.DOWN) from = ForgeDirection.UP;//下向きに設置した場合は真上を向いている
         	ArrayList<ForgeDirection> dir = BCLoadHandler.getPipeConected(this.worldObj, this.xCoord, this.yCoord, this.zCoord, from);
 
         	DCsLog.debugTrace("CurrentMetadata: " + this.getBlockMetadata());
@@ -309,7 +309,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
         }
         else
         {
-            EntityItem entityitem = getEntityAbove(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() - 1.0D, par0Hopper.getZPos());
+            EntityItem entityitem = getEntityAbove(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos(), par0Hopper.getZPos());
 
             if (entityitem != null)
             {
@@ -483,7 +483,7 @@ public class TileEntityRHopperGold extends TileEntityRHopper
     //1ブロック下のインベントリ取得
     public static IInventory getInventoryAboveHopper(Hopper par0Hopper)
     {
-        return getInventoryAtLocation(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() - 1.0D, par0Hopper.getZPos());
+        return getInventoryAtLocation(par0Hopper.getWorldObj(), par0Hopper.getXPos(), par0Hopper.getYPos() + 1, par0Hopper.getZPos());
     }
 
     //EntityItemの吸引範囲

@@ -444,9 +444,13 @@ public class TileEntityHopperGold extends TileEntityRHopper
 
             if (itemstack1 == null)
             {
-                par0IInventory.setInventorySlotContents(par2, par1ItemStack);
-                par1ItemStack = null;
-                flag = true;
+            	int k = par0IInventory.getInventoryStackLimit();
+                int l = Math.min(par1ItemStack.stackSize, k);
+                ItemStack insert = par1ItemStack.copy();
+                par1ItemStack.stackSize -= l;
+                insert.stackSize = l;
+                par0IInventory.setInventorySlotContents(par2, insert);
+                flag = l > 0;
             }
             else if (areItemStacksEqualItem(itemstack1, par1ItemStack))
             {
